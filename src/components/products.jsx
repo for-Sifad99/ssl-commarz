@@ -13,7 +13,7 @@ const services = [
   },
   {
     id: 2,
-    name: "Mobile App Development",
+    name: "App Development",
     description: "Cross-platform apps with React Native.",
     icon: Smartphone,
     price: 299,

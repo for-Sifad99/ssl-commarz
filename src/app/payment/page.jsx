@@ -1,21 +1,55 @@
 "use client";
 
+import axios from "axios";
 import Image from "next/image";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function PaymentPage() {
   const params = useSearchParams();
-  const name = params.get("name");
-  const price = params.get("price");
+  const productId = params.get("id");
+  const productName = params.get("name");
+  const price = parseFloat(params.get("price")) || 0;
   const [email, setEmail] = useState("example@email.com");
+  const name = "Sifayed Islam";
+
+  const handleSubmit = async () => {
+    try {
+      const payData = {
+        userId: productId,
+        name,
+        email,
+        productId,
+        productName,
+        amount: price,
+        currency: "BDT",
+        date: new Date(),
+      };
+
+      const response = await axios.post(
+        "http://localhost:5000/api/payment/init",
+        payData
+      );
+
+      const gatewayUrl = response.data.url;
+
+      if (gatewayUrl && gatewayUrl.startsWith("http")) {
+        window.location.href = gatewayUrl; // redirect to SSLCommerz payment page
+      } else {
+        alert("Payment page unavailable. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Payment create error:", error);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row">
-      {/* Left Half - Image */}
+      {/* Left - Image */}
       <div className="relative w-full lg:w-1/2 h-64 lg:h-auto">
         <Image
-          src="/pay.png" // public ফোল্ডারে pay.png রাখো
+          src="/pay.png"
           alt="Payment Illustration"
           fill
           className="object-cover"
@@ -23,21 +57,14 @@ export default function PaymentPage() {
         />
       </div>
 
-      {/* Right Half - Content */}
-      <div className="w-full lg:w-1/2 bg-gray-50 flex flex-col items-center py-8 px-15">
-        {/* Logo */}
-        <div className="my-4 self-start">
-          <Image
-            src="/logo.png" // public ফোল্ডারে logo.png রাখো
-            alt="Site Logo"
-            width={180}
-            height={80}
-          />
-        </div>
+      {/* Right - Content */}
+      <div className="w-full lg:w-1/2 bg-gray-50 flex flex-col items-center py-8 px-6">
+        <Link href="/" className="my-4 self-start">
+          <Image src="/logo.png" alt="Site Logo" width={180} height={80} />
+        </Link>
 
-        {/* Card */}
-        <div className="rounded-2xl px-4 w-full">
-          <h2 className="text-xl font-semibold mb-2">{name}</h2>
+        <div className="rounded-2xl px-4 w-full max-w-md">
+          <h2 className="text-xl font-semibold mb-2">{productName}</h2>
           <p className="text-gray-600 mb-1">
             Price: <span className="font-medium">${price}</span>
           </p>
@@ -66,8 +93,9 @@ export default function PaymentPage() {
               id="email"
               type="email"
               value={email}
+              required
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border-2 border-[#ff0000]/40 rounded-xl focus:outline-none focus:border-[#ff0000]"
+              className="w-full px-4 py-2 text-gray-800 border-2 border-[#ff0000]/40 rounded-xl focus:outline-none focus:border-[#ff0000]"
             />
             <p className="text-xs text-gray-500 mt-1">
               This email will be used to send you the invoice and updates.
@@ -75,7 +103,10 @@ export default function PaymentPage() {
           </div>
 
           {/* Pay button */}
-          <button className="w-full px-4 py-3 bg-[#ff0000] text-white rounded-xl font-medium hover:bg-red-700 transition">
+          <button
+            onClick={handleSubmit}
+            className="w-full px-4 py-3 bg-[#ff0000] text-white rounded-xl font-medium hover:bg-red-700 transition"
+          >
             Pay Now
           </button>
         </div>
