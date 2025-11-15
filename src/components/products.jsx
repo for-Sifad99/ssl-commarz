@@ -47,17 +47,17 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="h-screen w-screen flex flex-col items-center justify-center overflow-hidden bg-gray-50 px-15">
-      <h1 className="text-5xl font-bold mb-12 text-center text-black">
+    <div className="flex flex-col items-center justify-center bg-gray-50 px-2">
+      <h1 className="text-5xl font-bold mb-10 text-center text-black">
         Our Services
       </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="flex flex-wrap gap-4 mx-auto justify-center">
         {services.map((service) => {
           const Icon = service.icon;
           return (
             <div
               key={service.id}
-              className="bg-white rounded-2xl shadow p-6 flex flex-col items-center text-center"
+              className="bg-white rounded-2xl shadow p-6 flex flex-col items-center text-center w-60 max-w-full"
             >
               <div className="p-4 bg-[#ff0000]/10 rounded-full mb-4">
                 <Icon className="w-8 h-8 text-[#ff0000]" />
